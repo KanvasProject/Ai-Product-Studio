@@ -1,0 +1,190 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Product Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+      if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+    </script>
+    <style>
+        :root {
+            --background-light: #ffffff;
+            --background-dark: #020617;
+            --foreground-light: #020617;
+            --foreground-dark: #f8fafc;
+            --accent-color: #2563eb;
+            --accent-color-hover: #1d4ed8;
+            --card-light: #ffffff;
+            --card-dark: #0f172a;
+            --border-light: #e2e8f0;
+            --border-dark: #1e293b;
+            --muted-foreground-light: #64748b;
+            --muted-foreground-dark: #94a3b8;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-color: var(--background-light);
+            color: var(--foreground-light);
+        }
+        .dark body {
+            background-color: var(--background-dark);
+            color: var(--foreground-dark);
+        }
+
+        /* Desktop-specific layout */
+        @media (min-width: 1024px) {
+            body {
+                overflow: hidden;
+            }
+            .control-panel, .results-panel {
+                height: 100vh;
+                overflow-y: auto;
+            }
+        }
+
+        /* Custom scrollbar */
+        .control-panel::-webkit-scrollbar, .results-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        .control-panel::-webkit-scrollbar-track, .results-panel::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .control-panel::-webkit-scrollbar-thumb, .results-panel::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark .control-panel::-webkit-scrollbar-thumb, .dark .results-panel::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border-left-color: #fff;
+            animation: spin 1s ease infinite;
+        }
+        .dark .spinner {
+             border: 3px solid rgba(255, 255, 255, 0.2);
+             border-left-color: #fff;
+        }
+         .page-spinner .spinner {
+            width: 28px;
+            height: 28px;
+            border-left-color: #000;
+        }
+        .dark .page-spinner .spinner {
+             border-left-color: #fff;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* New Active Styles */
+        .option-btn.active, .concept-checkbox:checked + div, .category-btn.active, .tab-btn.active {
+            border-color: var(--accent-color);
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: 600;
+        }
+        .dark .option-btn.active, .dark .concept-checkbox:checked + div, .dark .category-btn.active, .dark .tab-btn.active {
+            color: white;
+        }
+        .option-btn:not(.active):hover, .category-btn:not(.active):hover {
+            border-color: #94a3b8;
+        }
+        .dark .option-btn:not(.active):hover, .dark .category-btn:not(.active):hover {
+            border-color: #475569;
+        }
+        
+        .tab-btn {
+             border-bottom: 2px solid transparent;
+        }
+        .tab-btn.active {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            background-color: transparent;
+        }
+        .dark .tab-btn.active {
+            color: var(--accent-color);
+        }
+
+        /* Card Hover */
+        .card-container:hover .card-overlay {
+            opacity: 1;
+        }
+        .card-overlay {
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+        }
+
+        /* Modal transitions */
+        #imageModal, #motionModal {
+            transition: opacity 0.3s ease;
+        }
+
+        /* New Step Badge */
+        .step-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background-color: var(--card-light);
+            color: var(--accent-color);
+            font-weight: 700;
+            font-size: 1rem;
+            border: 2px solid var(--accent-color);
+        }
+        .dark .step-badge {
+            background-color: var(--card-dark);
+        }
+        
+        /* Skeleton Loader */
+        .skeleton {
+            background-color: #e2e8f0;
+            border-radius: 0.5rem;
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .dark .skeleton {
+             background-color: #1e293b;
+        }
+        @keyframes pulse {
+          50% {
+            opacity: .5;
+          }
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.24.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-gray-50 dark:bg-slate-950 text-slate-900 dark:text-slate-50">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>
